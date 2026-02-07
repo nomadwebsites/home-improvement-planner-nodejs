@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Improvement Planner</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏠 Home Improvement Planner</h1>
+            <p class="subtitle">Plan and estimate your home projects</p>
+        </header>
+
+        <div class="add-project-section">
+            <button id="add-project-btn" class="btn btn-primary">+ Add New Project</button>
+        </div>
+
+        <div id="projects-container" class="projects-container">
+            <!-- Projects will be dynamically added here -->
+        </div>
+
+        <div class="summary-section">
+            <h2>Overall Summary</h2>
+            <div class="summary-stats">
+                <div class="stat-card">
+                    <span class="stat-label">Total Projects</span>
+                    <span id="total-projects" class="stat-value">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Total Cost</span>
+                    <span id="total-cost" class="stat-value">$0.00</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Total Value Add</span>
+                    <span id="total-value-add" class="stat-value">$0.00</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Net Value</span>
+                    <span id="net-value" class="stat-value">$0.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Modal -->
+    <div id="project-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add New Project</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="project-form">
+                    <div class="form-group">
+                        <label for="project-name">Project Name *</label>
+                        <input type="text" id="project-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="value-add">Estimated Value Add ($)</label>
+                        <input type="number" id="value-add" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="value-add-description">Value Add Description</label>
+                        <textarea id="value-add-description" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancel-project-btn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Project</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cost Modal -->
+    <div id="cost-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="cost-modal-title">Add Cost Item</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="cost-form">
+                    <div class="form-group">
+                        <label for="cost-description">Description *</label>
+                        <input type="text" id="cost-description" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cost-amount">Amount ($) *</label>
+                        <input type="number" id="cost-amount" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancel-cost-btn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Cost</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
