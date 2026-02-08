@@ -290,6 +290,7 @@ header h1 {
     padding: 30px;
     border-radius: 12px;
     box-shadow: var(--shadow);
+    margin-bottom: 30px;
 }
 
 .summary-section h2 {
