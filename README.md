@@ -23,11 +23,11 @@ A web-based application for planning and estimating home improvement projects. T
 
 ### Quick Setup
 
-1. Clone or download this repository to your Ubuntu VM:
+1. Clone this repository to your Ubuntu VM:
 ```bash
 cd ~
-git clone <your-repo-url> home-improvement-planner
-cd home-improvement-planner
+git clone https://github.com/nomadwebsites/home-improvement-planner-nodejs.git
+cd home-improvement-planner-nodejs
 ```
 
 2. Run the setup script:
@@ -44,6 +44,20 @@ npm start
 4. Access the app in your browser:
 - From the VM: `http://localhost:3000`
 - From other devices on your network: `http://YOUR_VM_IP:3000`
+
+### 🌟 Auto-Start Setup (Recommended)
+
+For automatic startup and access without a port number:
+
+1. **Set up auto-start on boot:**
+   - See: `AUTO-START-SETUP.md` for complete guide
+   - Configures systemd service for automatic startup
+   - Sets up nginx reverse proxy (access without port number)
+
+2. **Configure Pi-hole DNS** (optional):
+   - See: `PIHOLE-DNS-SETUP.md`
+   - Access via friendly URL like `http://homeimprovements.local`
+   - No port number needed!
 
 ### Manual Setup
 

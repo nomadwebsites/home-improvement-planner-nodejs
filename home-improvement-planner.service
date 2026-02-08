@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 User=YOUR_USERNAME
-WorkingDirectory=/path/to/home-improvement-planner
+WorkingDirectory=/home/YOUR_USERNAME/home-improvement-planner-nodejs
 ExecStart=/usr/bin/node server.js
 Restart=on-failure
 RestartSec=10
