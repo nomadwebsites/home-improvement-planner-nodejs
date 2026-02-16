@@ -78,6 +78,28 @@ app.post('/api/projects', (req, res) => {
   }
 });
 
+// Update project priorities (reorder) - MUST be before /:id route
+app.put('/api/projects/reorder', (req, res) => {
+  try {
+    const { project_ids } = req.body;
+    
+    const updatePriority = db.prepare('UPDATE projects SET priority = ? WHERE id = ?');
+    const updateMany = db.transaction((ids) => {
+      ids.forEach((id, index) => {
+        updatePriority.run(index, id);
+      });
+    });
+    
+    updateMany(project_ids);
+    
+    io.emit('projects_reordered', { project_ids });
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error reordering projects:', error);
+    res.status(500).json({ error: 'Failed to reorder projects' });
+  }
+});
+
 // Update a project
 app.put('/api/projects/:id', (req, res) => {
   try {
@@ -117,28 +139,6 @@ app.delete('/api/projects/:id', (req, res) => {
   } catch (error) {
     console.error('Error deleting project:', error);
     res.status(500).json({ error: 'Failed to delete project' });
-  }
-});
-
-// Update project priorities (reorder)
-app.put('/api/projects/reorder', (req, res) => {
-  try {
-    const { project_ids } = req.body;
-    
-    const updatePriority = db.prepare('UPDATE projects SET priority = ? WHERE id = ?');
-    const updateMany = db.transaction((ids) => {
-      ids.forEach((id, index) => {
-        updatePriority.run(index, id);
-      });
-    });
-    
-    updateMany(project_ids);
-    
-    io.emit('projects_reordered', { project_ids });
-    res.json({ success: true });
-  } catch (error) {
-    console.error('Error reordering projects:', error);
-    res.status(500).json({ error: 'Failed to reorder projects' });
   }
 });
 
