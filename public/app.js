@@ -51,7 +51,19 @@ function renderProjects() {
             <div class="project-header">
                 <div class="project-info">
                     <div class="project-name">${escapeHtml(project.name)}</div>
-                    <span class="project-priority">Priority: ${index + 1}</span>
+                    <div class="project-priority-container">
+                        <label for="priority-${project.id}">Priority:</label>
+                        <input 
+                            type="number" 
+                            id="priority-${project.id}" 
+                            class="priority-input" 
+                            value="${index + 1}" 
+                            min="1" 
+                            max="${projects.length}"
+                            data-project-id="${project.id}"
+                            title="Enter a number to move this project to that position"
+                        />
+                    </div>
                 </div>
                 <div class="project-actions">
                     <button class="icon-btn" onclick="editProject(${project.id})" title="Edit Project">✏️</button>
@@ -96,6 +108,7 @@ function renderProjects() {
     `).join('');
 
     initializeDragAndDrop();
+    initializePriorityInputs();
 }
 
 // Update summary statistics
@@ -343,6 +356,72 @@ function getDragAfterElement(container, y) {
             return closest;
         }
     }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+// Priority input functionality
+function initializePriorityInputs() {
+    const priorityInputs = document.querySelectorAll('.priority-input');
+    
+    priorityInputs.forEach(input => {
+        // Store the original value
+        input.addEventListener('focus', (e) => {
+            e.target.dataset.originalValue = e.target.value;
+        });
+        
+        // Handle Enter key
+        input.addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                await updateProjectPriority(e.target);
+                e.target.blur();
+            }
+        });
+        
+        // Handle blur (when user clicks away)
+        input.addEventListener('blur', async (e) => {
+            await updateProjectPriority(e.target);
+        });
+        
+        // Prevent drag when interacting with input
+        input.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+        });
+    });
+}
+
+async function updateProjectPriority(input) {
+    const projectId = input.dataset.projectId;
+    const newPriority = parseInt(input.value);
+    const originalValue = parseInt(input.dataset.originalValue);
+    
+    // Validate input
+    if (isNaN(newPriority) || newPriority < 1) {
+        input.value = originalValue;
+        return;
+    }
+    
+    // If value hasn't changed, do nothing
+    if (newPriority === originalValue) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/projects/${projectId}/priority`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ priority: newPriority - 1 }) // Convert to 0-indexed
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to update priority');
+        }
+        
+        // The socket event will trigger a reload
+    } catch (error) {
+        console.error('Error updating priority:', error);
+        alert('Failed to update priority');
+        input.value = originalValue; // Restore original value on error
+    }
 }
 
 // Project operations

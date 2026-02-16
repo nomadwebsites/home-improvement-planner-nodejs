@@ -100,6 +100,60 @@ app.put('/api/projects/reorder', (req, res) => {
   }
 });
 
+// Set specific priority for a project - MUST be before /:id route
+app.put('/api/projects/:id/priority', (req, res) => {
+  try {
+    const { id } = req.params;
+    const { priority } = req.body;
+    
+    // Validate priority is a number
+    const newPriority = parseInt(priority);
+    if (isNaN(newPriority) || newPriority < 0) {
+      return res.status(400).json({ error: 'Invalid priority value' });
+    }
+    
+    // Get all projects ordered by current priority
+    const projects = db.prepare('SELECT id, priority FROM projects ORDER BY priority ASC, id ASC').all();
+    
+    // Find the project being moved
+    const projectIndex = projects.findIndex(p => p.id === parseInt(id));
+    if (projectIndex === -1) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+    
+    // Ensure new priority is within valid range
+    const maxPriority = projects.length - 1;
+    const clampedPriority = Math.min(newPriority, maxPriority);
+    
+    // If priority is the same, no need to reorder
+    if (projectIndex === clampedPriority) {
+      return res.json({ success: true });
+    }
+    
+    // Remove project from current position
+    const [movedProject] = projects.splice(projectIndex, 1);
+    
+    // Insert at new position
+    projects.splice(clampedPriority, 0, movedProject);
+    
+    // Update all priorities in a transaction
+    const updatePriority = db.prepare('UPDATE projects SET priority = ? WHERE id = ?');
+    const updateMany = db.transaction((projectList) => {
+      projectList.forEach((project, index) => {
+        updatePriority.run(index, project.id);
+      });
+    });
+    
+    updateMany(projects);
+    
+    io.emit('projects_reordered', { project_ids: projects.map(p => p.id) });
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error setting project priority:', error);
+    res.status(500).json({ error: 'Failed to set project priority' });
+  }
+});
+
 // Update a project
 app.put('/api/projects/:id', (req, res) => {
   try {

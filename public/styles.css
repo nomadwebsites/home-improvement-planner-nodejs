@@ -159,13 +159,58 @@ header h1 {
     margin-bottom: 10px;
 }
 
-.project-priority {
-    display: inline-block;
+.project-priority-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     background: rgba(255, 255, 255, 0.2);
-    padding: 4px 12px;
+    padding: 6px 12px;
     border-radius: 20px;
     font-size: 0.875rem;
     font-weight: 600;
+}
+
+.project-priority-container label {
+    margin: 0;
+    color: white;
+    font-weight: 600;
+}
+
+.priority-input {
+    width: 50px;
+    padding: 4px 8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.priority-input:hover {
+    background: white;
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.priority-input:focus {
+    outline: none;
+    background: white;
+    border-color: white;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+/* Remove spinner arrows from number input */
+.priority-input::-webkit-outer-spin-button,
+.priority-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.priority-input[type=number] {
+    -moz-appearance: textfield;
 }
 
 .project-actions {
@@ -514,6 +559,15 @@ header h1 {
 
     .form-actions button {
         width: 100%;
+    }
+
+    .project-priority-container {
+        font-size: 0.8rem;
+    }
+
+    .priority-input {
+        width: 45px;
+        font-size: 0.8rem;
     }
 }
 
